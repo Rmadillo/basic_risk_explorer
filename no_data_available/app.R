@@ -2,7 +2,7 @@
 # Risk Explorer Shiny App
 # Dwight Barry, PhD | Enterprise Analytics
 # November 2015 - Version 0.9 - Proof of concept
-# May 2016 - Version 1.2 - no data available
+# May 2016 - Version 1.2 - expert opinion only
 # Changes from 1.0: added data input and mix/max adjustment
 # Changes from 1.1: substituted function for mc2d rpert,
 #                   removed min values from inputs
@@ -114,7 +114,7 @@ ui = shinyUI(fluidPage(
     mainPanel(
       
       # Simulation histogram/density plot
-      plotOutput(outputId = "distPlot2"),
+      plotOutput(outputId = "dist_plot"),
       
       # Output of simulation cdf plot click
       HTML(
@@ -125,7 +125,7 @@ ui = shinyUI(fluidPage(
       br(),
       
       # Simulation cdf plot
-      plotOutput(outputId = "distPlot3", click = "plot_click"),
+      plotOutput(outputId = "cdf_plot", click = "plot_click"),
       
       # Click output results
       htmlOutput("info")
@@ -144,7 +144,7 @@ ui = shinyUI(fluidPage(
 server = shinyServer(function(input, output) {
   
   # Simulation distribution plot
-  output$distPlot2 = renderPlot({
+  output$dist_plot = renderPlot({
     Rate = c(input$low, input$high, input$mode)
     df = data.frame(Rate)
     
@@ -180,7 +180,7 @@ server = shinyServer(function(input, output) {
   })
   
   # Simulation CDF plot
-  output$distPlot3 = renderPlot({
+  output$cdf_plot = renderPlot({
     Rate = c(input$low, input$high, input$mode)
     df = data.frame(Rate)
     
