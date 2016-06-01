@@ -106,7 +106,9 @@ ui = shinyUI(fluidPage(
         max = 10,
         value = 4,
         step = 1
-        )
+        ),
+      
+      submitButton("Submit")
       
       ),
     
@@ -118,7 +120,7 @@ ui = shinyUI(fluidPage(
       
       # Output of simulation cdf plot click
       HTML(
-        "<br><b>Click on the CDF line for a given rate value to obtain
+        "<br><b>Click on the CDF line for a given Value value to obtain
         the probability estimate.</b><br>"
       ),
       
@@ -145,17 +147,17 @@ server = shinyServer(function(input, output) {
   
   # Simulation distribution plot
   output$dist_plot = renderPlot({
-    Rate = c(input$low, input$high, input$mode)
-    df = data.frame(Rate)
+    Value = c(input$low, input$high, input$mode)
+    df = data.frame(Value)
     
-    bob = data.frame(Rate = rpert(
+    sim_df = data.frame(Value = rpert(
       input$reps,
-      (min(df$Rate) - min(df$Rate) * input$minperc),
+      (min(df$Value) - min(df$Value) * input$minperc),
       input$mode,
-      (max(df$Rate) + max(df$Rate) * input$maxperc),
+      (max(df$Value) + max(df$Value) * input$maxperc),
       input$gamma))
     
-    ggplot(bob, aes(Rate)) +
+    ggplot(sim_df, aes(Value)) +
       ggtitle("Simulation Distribution") +
       ylab("Density / Count") +
       geom_histogram(
@@ -165,8 +167,8 @@ server = shinyServer(function(input, output) {
         fill = "blue",
         alpha = 0.2,
         na.rm = T) +
-      xlim((min(df$Rate) - min(df$Rate) * input$minperc),
-           (max(df$Rate) + max(df$Rate) * input$maxperc)) +
+      xlim((min(df$Value) - min(df$Value) * input$minperc),
+           (max(df$Value) + max(df$Value) * input$maxperc)) +
       geom_density(
         col = "blue",
         fill = "blue",
@@ -181,22 +183,22 @@ server = shinyServer(function(input, output) {
   
   # Simulation CDF plot
   output$cdf_plot = renderPlot({
-    Rate = c(input$low, input$high, input$mode)
-    df = data.frame(Rate)
+    Value = c(input$low, input$high, input$mode)
+    df = data.frame(Value)
     
-    bob = data.frame(Rate = rpert(
+    sim_df = data.frame(Value = rpert(
       input$reps,
-      (min(df$Rate) - min(df$Rate) * input$minperc),
+      (min(df$Value) - min(df$Value) * input$minperc),
       input$mode,
-      (max(df$Rate) + max(df$Rate) * input$maxperc),
+      (max(df$Value) + max(df$Value) * input$maxperc),
       input$gamma
     ))
     
-    ggplot(bob, aes(Rate)) +
+    ggplot(sim_df, aes(Value)) +
       ggtitle("Simulation CDF") +
       ylab("Probability") +
-      xlim((min(df$Rate) - min(df$Rate) * input$minperc),
-           (max(df$Rate) + max(df$Rate) * input$maxperc)) +
+      xlim((min(df$Value) - min(df$Value) * input$minperc),
+           (max(df$Value) + max(df$Value) * input$maxperc)) +
       stat_ecdf(lwd = 2, na.rm = T) +
       theme(axis.ticks.y = element_blank(), axis.text.y = element_blank())
     
@@ -205,7 +207,7 @@ server = shinyServer(function(input, output) {
   # Plot-click result for simulation
   output$info = renderText({
     paste0(
-      "<i>The probability of obtaining a rate less than
+      "<i>The probability of obtaining a Value less than
       or equal to ",
       txtRound(input$plot_click$x, 1),
       " is about <b>",
@@ -217,14 +219,14 @@ server = shinyServer(function(input, output) {
   
   # Details on betaPERT parameters
   output$maxdens = renderText({
-    Rate = c(input$low, input$high, input$mode)
-    df = data.frame(Rate)
+    Value = c(input$low, input$high, input$mode)
+    df = data.frame(Value)
     
-    bob = data.frame(Rate = rpert(
+    sim_df = data.frame(Value = rpert(
       input$reps,
-      (min(df$Rate) - min(df$Rate) * input$minperc),
+      (min(df$Value) - min(df$Value) * input$minperc),
       input$mode,
-      (max(df$Rate) + max(df$Rate) * input$maxperc),
+      (max(df$Value) + max(df$Value) * input$maxperc),
       input$gamma
     ))
     
@@ -233,9 +235,9 @@ server = shinyServer(function(input, output) {
       "<b>BetaPERT Inputs:</b><br><i>Simulation mode: ",
       txtRound(input$mode, 1),
       ".<br>Simulation minimum: ",
-      txtRound((min(df$Rate) - min(df$Rate) * input$minperc), 1),
+      txtRound((min(df$Value) - min(df$Value) * input$minperc), 1),
       "<br>Simulation maximum: ",
-      txtRound(max(df$Rate) + max(df$Rate) * input$maxperc, 1),
+      txtRound(max(df$Value) + max(df$Value) * input$maxperc, 1),
       "</i>."
     )
     
